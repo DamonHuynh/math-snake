@@ -1,8 +1,8 @@
 import styles from "../styles/Tile.module.css"
 
-function Tile(){
+function Tile({numberForDevPurposes}){
     return (
-        <div className={styles.regularTile}></div>
+        <div className={styles.regularTile}>{numberForDevPurposes}</div>
     )
 }
 
