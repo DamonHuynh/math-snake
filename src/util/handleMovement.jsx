@@ -1,6 +1,10 @@
 import Tile from "../components/Tile";
 
+let intervalId = 0;
+//corressponds to moving right
+let lastInput = -17
 const processMovementInput = function (){
+    //keycodes
     const w = 87;
     const a = 65;
     const s = 83;
@@ -25,8 +29,7 @@ const processMovementInput = function (){
     return {movementKeyCode};
 }
 
-function handleMovement(e, setSnakePosition, setTileGrid){
-    const moveValue = processMovementInput().movementKeyCode.get(e.keyCode);
+function handleMovement(e, setSnakePosition, setTileGrid, moveValue){
     setSnakePosition((prevPosition) =>{
         let newPosition = [...prevPosition];
         const removeIndex = newPosition[0];
@@ -42,4 +45,15 @@ function handleMovement(e, setSnakePosition, setTileGrid){
     });
 }
 
-export default handleMovement;
+function move(e, setSnakePosition, setTileGrid){
+    const moveValue = processMovementInput().movementKeyCode.get(e.keyCode);
+    if (moveValue !== -lastInput){
+        clearInterval(intervalId);
+        intervalId = setInterval(() => {
+        handleMovement(e, setSnakePosition, setTileGrid, moveValue);
+        lastInput = moveValue;
+    }, 100);
+    }
+}
+
+export default move;
