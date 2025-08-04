@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import Tile from "../components/Tile";
 
 let intervalId = 0;
-//corressponds to moving right
-let lastInput = -17
+//cant move left for the first move
+let lastInput = 1
 const processMovementInput = function (){
     //keycodes
     const w = 87;
@@ -47,13 +48,17 @@ function handleMovement(e, setSnakePosition, setTileGrid, moveValue){
 
 function move(e, setSnakePosition, setTileGrid){
     const moveValue = processMovementInput().movementKeyCode.get(e.keyCode);
-    if (moveValue !== -lastInput){
+    console.log(moveValue);
+    //intervalID is only 0 on first move
+    if ((moveValue && moveValue !== -lastInput) && (moveValue !== lastInput|| intervalId == 0)){
         clearInterval(intervalId);
         intervalId = setInterval(() => {
-        handleMovement(e, setSnakePosition, setTileGrid, moveValue);
-        lastInput = moveValue;
-    }, 100);
+            handleMovement(e, setSnakePosition, setTileGrid, moveValue);
+            lastInput = moveValue;
+        }, 150);
     }
 }
+
+
 
 export default move;
