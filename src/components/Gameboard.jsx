@@ -13,7 +13,7 @@ function Gameboard(){
         grid[i] = i;
     }
 
-    const [snakePosition, setSnakePosition] = useState([140,141])
+    const [snakePosition, setSnakePosition] = useState([140,141,142,143])
     const [tileGrid, setTileGrid] = useState(()=> {
         for (let i = 0; i < grid.length; i++){
             grid[i] = <Tile key={i} numberForDevPurposes={i}></Tile>
