@@ -1,7 +1,7 @@
 import Tile from "./Tile"
 // import handleMovement from "../util/handleMovement";
 import move from "../util/handleMovement";
-import { SnakeTile, Snake} from "./Snake";
+import { SnakeTile} from "./Snake";
 import styles from "../styles/Gameboard.module.css"
 import {useEffect, useState } from "react";
 
