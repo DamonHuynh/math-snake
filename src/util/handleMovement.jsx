@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 import Tile from "../components/Tile";
+import { SnakeTile } from "../components/Snake";
+import checkCollision from "./deathLogic";
+import checkEaten from "./checkEaten";
 
 let intervalId = 0;
 //cant move left for the first move
 let lastInput = 1
+let shouldGrow = false;
 const processMovementInput = function (){
     //keycodes
     const w = 87;
@@ -30,35 +34,55 @@ const processMovementInput = function (){
     return {movementKeyCode};
 }
 
-function handleMovement(e, setSnakePosition, setTileGrid, moveValue){
+function handleMovement(setSnakePosition, setTileGrid, moveValue, shouldGrowRef){
     setSnakePosition((prevPosition) =>{
         let newPosition = [...prevPosition];
         const removeIndex = newPosition[0];
         setTileGrid((prevGrid)=>{
             const newGrid = [...prevGrid];
-            newGrid[removeIndex] = <Tile key={removeIndex} numberForDevPurposes={removeIndex}></Tile>
+            if (!shouldGrowRef.current){
+                newGrid[removeIndex] = <Tile key={removeIndex} numberForDevPurposes={removeIndex}></Tile>;
+            }
+            newPosition.forEach((index) => {
+                newGrid[index] = <SnakeTile key={index}></SnakeTile>;
+            });
             return newGrid
-        })
-        newPosition = newPosition.slice(1,newPosition.length);
+        });
+        if(!checkCollision(newPosition, 17)){
+            clearInterval(intervalId);
+            return newPosition;
+        }
+        if (!shouldGrowRef.current){
+            newPosition = newPosition.slice(1,newPosition.length);
+        }
+        else{
+            shouldGrowRef.current = false; 
+        }
         newPosition.push(newPosition[newPosition.length - 1] + moveValue);
-        console.log(newPosition);
         return newPosition;
     });
 }
 
-function move(e, setSnakePosition, setTileGrid){
+function move(e, setSnakePosition, setTileGrid,shouldGrowRef){
     const moveValue = processMovementInput().movementKeyCode.get(e.keyCode);
-    console.log(moveValue);
     //intervalID is only 0 on first move
-    if ((moveValue && moveValue !== -lastInput) && (moveValue !== lastInput|| intervalId == 0)){
+    if ((moveValue && moveValue !== -lastInput) &&
+     (moveValue !== lastInput|| intervalId == 0)
+    ){
+        // handleMovement(setSnakePosition, setTileGrid, moveValue);
+        // lastInput = moveValue;
         clearInterval(intervalId);
         intervalId = setInterval(() => {
-            handleMovement(e, setSnakePosition, setTileGrid, moveValue);
+            handleMovement(setSnakePosition, setTileGrid, moveValue, shouldGrowRef);
             lastInput = moveValue;
         }, 150);
+        
     }
 }
 
+function setShouldGrow(value){
+    shouldGrow = value;
+}
 
 
-export default move;
+export {move, setShouldGrow};

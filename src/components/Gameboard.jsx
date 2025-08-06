@@ -1,10 +1,12 @@
 import Tile from "./Tile"
 // import handleMovement from "../util/handleMovement";
-import move from "../util/handleMovement";
+import {move, setShouldGrow} from "../util/handleMovement";
 import { SnakeTile} from "./Snake";
 import styles from "../styles/Gameboard.module.css"
 import {useEffect, useState } from "react";
 import Food from "./Food";
+import checkEaten from "../util/checkEaten";
+import { useRef } from "react";
 
 function Gameboard(){
     //17x17 grid
@@ -37,8 +39,9 @@ function Gameboard(){
             return newGrid;
         })
     }, []);
-
-    const moveCallback = (e) => move(e,setSnakePosition, setTileGrid, gridDimensions);
+    const shouldGrowRef = useRef(false);
+    const eaten = checkEaten(snakePosition[snakePosition.length - 1],foodPosition);
+    const moveCallback = (e) => move(e,setSnakePosition, setTileGrid, shouldGrowRef);
 
     useEffect(()=>{
         window.addEventListener("keydown", moveCallback);
@@ -51,11 +54,13 @@ function Gameboard(){
         setTileGrid((prevGrid) => {
             const newGrid = [...prevGrid];
             newGrid[foodPosition] = <Food key={foodPosition}/>;
+            let tail = snakePosition[0];
+            console.log(tail);
             return newGrid;
         })
     }, [foodPosition])
-    
-    if (snakePosition[snakePosition.length - 1] === foodPosition){
+    if (eaten){
+        shouldGrowRef.current = true;
         setFoodPosition(()=>{
             let counter = 0;
             const allowedSpaces = new Array(gridSize - snakePosition.length);
@@ -80,4 +85,4 @@ function Gameboard(){
     )
 }
 
-export default Gameboard;
+export {Gameboard};

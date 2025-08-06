@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Gameboard from './components/Gameboard'
+import {Gameboard} from './components/Gameboard'
 function App() {
 
   return (
